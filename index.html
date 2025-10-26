@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Views Absensi</title>
+    <link rel="icon" type="image/png" href="https://iili.io/KjIKMJ9.png">
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #4f46e5;
+            min-height: 100%;
+        }
+        
+        html {
+            height: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #6366f1;
+            color: white;
+            padding: 30px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+
+        .header-text {
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            padding: 20px 30px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #3730a3;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .filter-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+
+        .filter-input {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            min-width: 200px;
+            transition: all 0.2s;
+            background: white;
+            cursor: pointer;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .filter-input option {
+            padding: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-clear {
+            background: #ef4444;
+            font-size: 0.85rem;
+            padding: 8px 16px;
+        }
+
+        .btn-clear:hover {
+            background: #dc2626;
+        }
+
+        .filter-results {
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .status {
+            padding: 15px 30px;
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .status.loading {
+            background: #dbeafe;
+            border-color: #3b82f6;
+        }
+
+        .status.error {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+
+        .status.success {
+            background: #e0f2f1;
+            border-color: #4ecdc4;
+        }
+
+        .table-container {
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        .data-grid {
+            display: grid;
+            gap: 16px;
+            width: 100%;
+            background: transparent;
+        }
+
+        .data-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .data-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            border-color: #4f46e5;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-index {
+            background: #4f46e5;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .card-content {
+            display: grid;
+            gap: 12px;
+        }
+
+        .data-field {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 8px 0;
+        }
+
+        .field-label {
+            font-weight: 600;
+            color: #4f46e5;
+            min-width: 120px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+
+        .field-value {
+            color: #374151;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            word-break: break-word;
+            flex: 1;
+        }
+
+        .field-value:empty::after {
+            content: '-';
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        /* Responsive Grid Layout */
+        @media (min-width: 640px) {
+            .data-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .card-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+            
+            .data-field {
+                flex-direction: column;
+                gap: 4px;
+            }
+            
+            .field-label {
+                min-width: auto;
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .data-grid {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+                gap: 24px;
+            }
+            
+            .data-card {
+                padding: 24px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .data-grid {
+                grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+                gap: 28px;
+            }
+            
+            .card-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .data-grid {
+                grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+                gap: 32px;
+            }
+            
+            .card-content {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 30px;
+            color: #64748b;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Mobile First - Small phones (320px - 480px) */
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+                background: #4f46e5;
+            }
+            
+            .container {
+                border-radius: 16px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            }
+            
+            .header {
+                padding: 20px 16px;
+                background: #6366f1;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .header::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                right: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+                animation: float 6s ease-in-out infinite;
+            }
+            
+            @keyframes float {
+                0%, 100% { transform: translateY(0px) rotate(0deg); }
+                50% { transform: translateY(-20px) rotate(180deg); }
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 12px;
+                position: relative;
+                z-index: 1;
+            }
+            
+            .logo {
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            }
+            
+            .header h1 {
+                font-size: 1.6rem;
+                margin-bottom: 4px;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+            
+            .header p {
+                font-size: 0.85rem;
+                opacity: 0.95;
+            }
+            
+            .controls {
+                padding: 16px;
+                background: #f8fafc;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            
+            .btn {
+                padding: 14px 16px;
+                font-size: 0.9rem;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+                transition: all 0.3s ease;
+            }
+            
+            .btn:hover:not(:disabled) {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+            }
+            
+            .status {
+                padding: 14px 16px;
+                font-size: 0.85rem;
+                border-radius: 0;
+                border-left: none;
+                border-top: 4px solid #f59e0b;
+            }
+            
+            .table-container {
+                padding: 16px;
+            }
+            
+            /* Mobile optimized grid */
+            .data-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .data-card {
+                padding: 16px;
+                border-radius: 12px;
+            }
+            
+            .card-content {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .data-field {
+                flex-direction: row;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 6px 0;
+            }
+            
+            .field-label {
+                min-width: 80px;
+                font-size: 0.75rem;
+            }
+            
+            .field-value {
+                font-size: 0.85rem;
+            }
+
+
+            
+            .empty-state {
+                padding: 40px 16px;
+            }
+            
+            .empty-state svg {
+                width: 56px;
+                height: 56px;
+            }
+            
+            .empty-state h3 {
+                font-size: 1.1rem;
+                margin: 16px 0 8px 0;
+            }
+            
+            .empty-state p {
+                font-size: 0.85rem;
+                line-height: 1.4;
+            }
+
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                margin-top: 12px;
+                padding-top: 12px;
+            }
+
+            .filter-input {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .btn-clear {
+                align-self: center;
+                min-width: 120px;
+            }
+        }
+
+        /* Tablets (481px - 768px) */
+        @media (min-width: 481px) and (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+            
+            .container {
+                border-radius: 20px;
+                box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            }
+            
+            .header {
+                padding: 32px 24px;
+                background: #6366f1;
+            }
+            
+            .header-content {
+                gap: 20px;
+            }
+            
+            .logo {
+                width: 56px;
+                height: 56px;
+                border-radius: 14px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+                font-weight: 800;
+                color: white;
+            }
+            
+            .header p {
+                font-size: 1.05rem;
+            }
+            
+            .controls {
+                padding: 24px;
+                background: #f1f5f9;
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+            }
+            
+            .btn {
+                padding: 14px 28px;
+                font-size: 1rem;
+                border-radius: 14px;
+                min-width: 140px;
+                box-shadow: 0 6px 16px rgba(79, 70, 229, 0.25);
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: rgba(255,255,255,0.2);
+                transition: left 0.5s;
+            }
+            
+            .btn:hover::before {
+                left: 100%;
+            }
+            
+            .status {
+                padding: 18px 24px;
+                font-size: 0.95rem;
+                border-radius: 0;
+            }
+            
+            .table-container {
+                padding: 24px;
+            }
+            
+            /* Tablet optimized grid */
+            .data-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .data-card {
+                padding: 20px;
+                border-radius: 16px;
+            }
+            
+            .card-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            
+            .data-field {
+                flex-direction: column;
+                gap: 4px;
+            }
+            
+            .field-label {
+                min-width: auto;
+                font-size: 0.8rem;
+            }
+            
+            .field-value {
+                font-size: 0.9rem;
+            }
+            
+            .empty-state {
+                padding: 60px 24px;
+            }
+            
+            .empty-state svg {
+                width: 72px;
+                height: 72px;
+            }
+        }
+
+        /* Small Desktop (769px - 1024px) */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            body {
+                padding: 20px;
+            }
+            
+            .container {
+                border-radius: 24px;
+                box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+            }
+            
+            .header {
+                padding: 40px 32px;
+                background: #6366f1;
+                position: relative;
+            }
+            
+            .header::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: rgba(255,255,255,0.6);
+            }
+            
+            .logo {
+                width: 64px;
+                height: 64px;
+                border-radius: 16px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                transition: transform 0.3s ease;
+            }
+            
+            .logo:hover {
+                transform: scale(1.05) rotate(5deg);
+            }
+            
+            .header h1 {
+                font-size: 2.6rem;
+                font-weight: 900;
+                text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            }
+            
+            .header p {
+                font-size: 1.15rem;
+            }
+            
+            .controls {
+                padding: 28px 32px;
+                background: #f8fafc;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .btn {
+                padding: 16px 32px;
+                font-size: 1.05rem;
+                border-radius: 16px;
+                min-width: 160px;
+                box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .btn:hover:not(:disabled) {
+                transform: translateY(-3px) scale(1.02);
+                box-shadow: 0 12px 28px rgba(79, 70, 229, 0.35);
+            }
+            
+            .table-container {
+                padding: 32px;
+            }
+            
+            /* Desktop optimized grid */
+            .data-grid {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+                gap: 24px;
+            }
+            
+            .data-card {
+                padding: 24px;
+                border-radius: 20px;
+            }
+            
+            .card-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+            
+            .data-field {
+                flex-direction: column;
+                gap: 6px;
+            }
+            
+            .field-label {
+                font-size: 0.85rem;
+            }
+            
+            .field-value {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Large Desktop (1025px+) */
+        @media (min-width: 1025px) {
+            body {
+                padding: 24px;
+            }
+            
+            .container {
+                max-width: 1400px;
+                border-radius: 28px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            }
+            
+            .header {
+                padding: 48px 40px;
+                background: #6366f1;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .header::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: rgba(255,255,255,0.05);
+                animation: rotate 20s linear infinite;
+            }
+            
+            @keyframes rotate {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+            
+            .header-content {
+                position: relative;
+                z-index: 1;
+            }
+            
+            .logo {
+                width: 72px;
+                height: 72px;
+                border-radius: 18px;
+                box-shadow: 0 12px 36px rgba(0,0,0,0.25);
+                transition: all 0.4s ease;
+            }
+            
+            .logo:hover {
+                transform: scale(1.1) rotate(-5deg);
+                box-shadow: 0 16px 48px rgba(0,0,0,0.35);
+            }
+            
+            .header h1 {
+                font-size: 3.2rem;
+                font-weight: 900;
+                text-shadow: 0 6px 12px rgba(0,0,0,0.2);
+                letter-spacing: -0.02em;
+            }
+            
+            .header p {
+                font-size: 1.25rem;
+                margin-top: 12px;
+            }
+            
+            .controls {
+                padding: 32px 40px;
+                background: #f8fafc;
+                display: grid;
+                grid-template-columns: 1fr auto auto 1fr;
+                gap: 24px;
+                align-items: center;
+            }
+            
+            .controls::before {
+                content: '⚡';
+                font-size: 1.5rem;
+                justify-self: end;
+            }
+            
+            .controls::after {
+                content: '📊';
+                font-size: 1.5rem;
+                justify-self: start;
+            }
+            
+            .btn {
+                padding: 18px 36px;
+                font-size: 1.1rem;
+                border-radius: 18px;
+                min-width: 180px;
+                box-shadow: 0 10px 24px rgba(79, 70, 229, 0.2);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .btn::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0;
+                height: 0;
+                background: rgba(255,255,255,0.3);
+                transition: all 0.4s ease;
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+            }
+            
+            .btn:hover:not(:disabled)::after {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .btn:hover:not(:disabled) {
+                transform: translateY(-4px) scale(1.03);
+                box-shadow: 0 16px 32px rgba(79, 70, 229, 0.3);
+            }
+            
+            .table-container {
+                padding: 40px;
+            }
+            
+            /* Large Desktop optimized grid */
+            .data-grid {
+                grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+                gap: 32px;
+            }
+            
+            .data-card {
+                padding: 28px;
+                border-radius: 24px;
+            }
+            
+            .card-content {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .data-field {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .field-label {
+                font-size: 0.9rem;
+            }
+            
+            .field-value {
+                font-size: 1rem;
+            }
+            
+            .empty-state {
+                padding: 80px 40px;
+            }
+            
+            .empty-state svg {
+                width: 96px;
+                height: 96px;
+                transition: transform 0.3s ease;
+            }
+            
+            .empty-state:hover svg {
+                transform: scale(1.1) rotate(5deg);
+            }
+        }
+
+        /* PWA Install Notification */
+        .pwa-install-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: #4f46e5;
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(79, 70, 229, 0.3);
+            display: none;
+            align-items: center;
+            gap: 16px;
+            z-index: 1000;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .pwa-install-banner.show {
+            display: flex;
+        }
+
+        .pwa-banner-content {
+            flex: 1;
+        }
+
+        .pwa-banner-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .pwa-banner-text {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            line-height: 1.3;
+        }
+
+        .pwa-banner-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .pwa-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .pwa-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .pwa-btn.primary {
+            background: white;
+            color: #4f46e5;
+        }
+
+        .pwa-btn.primary:hover {
+            background: #f8fafc;
+            transform: translateY(-1px);
+        }
+
+        .pwa-banner-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        /* Mobile PWA Banner */
+        @media (max-width: 480px) {
+            .pwa-install-banner {
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+                padding: 14px 16px;
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+
+            .pwa-banner-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .pwa-btn {
+                flex: 1;
+                max-width: 120px;
+            }
+        }
+
+        /* PWA Status Indicator */
+        .pwa-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 1001;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .pwa-status.offline {
+            background: #ef4444;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Offline Page */
+        .offline-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #1f2937;
+            color: white;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .offline-page.show {
+            display: flex;
+        }
+
+        .offline-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .offline-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #ef4444;
+        }
+
+        .offline-message {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            max-width: 500px;
+            line-height: 1.5;
+        }
+
+        .offline-features {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .offline-features h3 {
+            margin: 0 0 15px 0;
+            font-size: 1.2rem;
+            color: #10b981;
+        }
+
+        .offline-features ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .offline-features li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .offline-features li::before {
+            content: '✓';
+            color: #10b981;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .retry-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .retry-btn:hover {
+            background: #3730a3;
+            transform: translateY(-2px);
+        }
+
+        .retry-btn:disabled {
+            background: #6b7280;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .connection-status {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 20px;
+        }
+
+        /* Mobile Offline Page */
+        @media (max-width: 480px) {
+            .offline-icon {
+                font-size: 3rem;
+                margin-bottom: 15px;
+            }
+
+            .offline-title {
+                font-size: 1.5rem;
+                margin-bottom: 10px;
+            }
+
+            .offline-message {
+                font-size: 1rem;
+                margin-bottom: 25px;
+            }
+
+            .offline-features {
+                padding: 15px;
+                margin-bottom: 25px;
+            }
+
+            .offline-features h3 {
+                font-size: 1.1rem;
+                margin-bottom: 12px;
+            }
+
+            .retry-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <img src="https://iili.io/KjIKMJ9.png" alt="Logo" class="logo" onerror="this.style.display='none';">
+                <div class="header-text">
+                    <h1>Views Absensi</h1>
+                    <p>Menampilkan data absensi dari Google Spreadsheet</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="controls">
+            <button class="btn" id="loadBtn" onclick="loadSpreadsheetData()">
+                🔄 Muat Data
+            </button>
+            <button class="btn" id="refreshBtn" onclick="refreshData()" disabled>
+                ↻ Refresh
+            </button>
+            <div class="filter-section" id="filterSection" style="display: none;">
+                <label for="nameFilter" class="filter-label">🔍 Filter Nama:</label>
+                <select id="nameFilter" class="filter-input" onchange="filterByName()">
+                    <option value="">-- Pilih Nama --</option>
+                    <option value="Heri Heryana, S.Pd.">Heri Heryana, S.Pd.</option>
+                    <option value="Sawali">Sawali</option>
+                    <option value="Hadi Supriadi, S.Kom.">Hadi Supriadi, S.Kom.</option>
+                    <option value="Indra Mulyana, S.Pd.">Indra Mulyana, S.Pd.</option>
+                    <option value="Encep Syafa'at Mulyazam, S.T.">Encep Syafa'at Mulyazam, S.T.</option>
+                    <option value="Ajeng Saputri, S.S.">Ajeng Saputri, S.S.</option>
+                    <option value="Suci Indah Novianty, S.Pd.">Suci Indah Novianty, S.Pd.</option>
+                    <option value="Alih Nurningsih, S.Pd.">Alih Nurningsih, S.Pd.</option>
+                    <option value="Bambang Liman Mulyana, S.Kom.">Bambang Liman Mulyana, S.Kom.</option>
+                    <option value="Akus Kustandi, S.S.">Akus Kustandi, S.S.</option>
+                    <option value="Anna Muliawati, S.Ap.">Anna Muliawati, S.Ap.</option>
+                    <option value="Sania Listiawati">Sania Listiawati</option>
+                    <option value="Yofa Andre">Yofa Andre</option>
+                    <option value="Rifki Al Azhari">Rifki Al Azhari</option>
+                </select>
+                <button class="btn btn-clear" id="clearBtn" onclick="clearFilter()">
+                    ✖ Hapus Filter
+                </button>
+            </div>
+        </div>
+
+        <div class="status" id="status">
+            Klik "Muat Data" untuk memulai mengambil data dari spreadsheet
+        </div>
+
+        <div class="table-container" id="tableContainer">
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                </svg>
+                <h3>Belum ada data yang dimuat</h3>
+                <p>Gunakan tombol "Muat Data" untuk mengambil data dari spreadsheet</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PWA Install Banner -->
+    <div class="pwa-install-banner" id="pwaInstallBanner">
+        <div class="pwa-banner-icon">📱</div>
+        <div class="pwa-banner-content">
+            <div class="pwa-banner-title">Install Views Absensi</div>
+            <div class="pwa-banner-text">Akses lebih cepat dengan menginstall aplikasi di perangkat Anda</div>
+        </div>
+        <div class="pwa-banner-actions">
+            <button class="pwa-btn" onclick="dismissInstallBanner()">Nanti</button>
+            <button class="pwa-btn primary" onclick="installPWA()">Install</button>
+        </div>
+    </div>
+
+    <!-- PWA Status Indicator -->
+    <div class="pwa-status" id="pwaStatus">
+        <span id="pwaStatusIcon">🟢</span>
+        <span id="pwaStatusText">Online</span>
+    </div>
+
+    <!-- Offline Page -->
+    <div class="offline-page" id="offlinePage">
+        <div class="offline-icon">📡</div>
+        <h1 class="offline-title">Tidak Ada Koneksi</h1>
+        <p class="offline-message">
+            Anda sedang offline. Beberapa fitur mungkin tidak tersedia, tetapi Anda masih dapat melihat data yang telah dimuat sebelumnya.
+        </p>
+        
+        <div class="offline-features">
+            <h3>Yang Masih Bisa Dilakukan:</h3>
+            <ul>
+                <li>Melihat data yang sudah dimuat</li>
+                <li>Menggunakan filter nama</li>
+                <li>Navigasi dalam aplikasi</li>
+                <li>Mengakses data yang tersimpan</li>
+            </ul>
+        </div>
+        
+        <button class="retry-btn" onclick="checkConnection()" id="retryBtn">
+            🔄 Coba Lagi
+        </button>
+        
+        <button class="retry-btn" onclick="hideOfflinePage()" style="background: #6b7280;">
+            📱 Lanjut Offline
+        </button>
+        
+        <div class="connection-status" id="connectionStatus">
+            Memeriksa koneksi...
+        </div>
+    </div>
+
+    <script>
+        let currentData = [];
+        let filteredData = [];
+        let nameColumnIndex = -1;
+        const SPREADSHEET_ID = '1hbUXyrTBqbPPRdrrJZCl-2849QhBQAvrd5TEL2_NNZw';
+        
+        // PWA Variables
+        let deferredPrompt;
+        let isInstalled = false;
+        
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        function findNameColumn(headers) {
+            // Look for common name column headers (case insensitive)
+            const namePatterns = ['nama', 'name', 'full name', 'nama lengkap', 'student name', 'employee name'];
+            
+            for (let i = 0; i < headers.length; i++) {
+                const header = headers[i].toLowerCase().trim();
+                if (namePatterns.some(pattern => header.includes(pattern))) {
+                    return i;
+                }
+            }
+            
+            // If no specific name column found, assume first column
+            return 0;
+        }
+
+        function createTable(data) {
+            if (!data || data.length === 0) {
+                return '<div class="empty-state"><h3>Tidak ada data ditemukan</h3></div>';
+            }
+
+            const headers = data[0];
+            const rows = data.slice(1);
+
+            let gridHTML = '<div class="data-grid">';
+            
+            // Create data cards
+            rows.forEach((row, rowIndex) => {
+                // Find the name field for card title
+                const nameValue = row[nameColumnIndex] || `Data ${rowIndex + 1}`;
+                
+                gridHTML += `<div class="data-card">`;
+                
+                // Card header with title and index
+                gridHTML += `<div class="card-header">`;
+                gridHTML += `<div class="card-title">`;
+                gridHTML += `<div class="card-index">${rowIndex + 1}</div>`;
+                gridHTML += `<span>${nameValue}</span>`;
+                gridHTML += `</div>`;
+                gridHTML += `</div>`;
+                
+                // Card content with all fields
+                gridHTML += `<div class="card-content">`;
+                headers.forEach((header, index) => {
+                    if (header && row[index] !== undefined) {
+                        gridHTML += `<div class="data-field">`;
+                        gridHTML += `<div class="field-label">${header}</div>`;
+                        gridHTML += `<div class="field-value">${row[index] || ''}</div>`;
+                        gridHTML += `</div>`;
+                    }
+                });
+                gridHTML += `</div>`;
+                
+                gridHTML += `</div>`;
+            });
+
+            gridHTML += '</div>';
+            return gridHTML;
+        }
+
+        function filterByName() {
+            const filterValue = document.getElementById('nameFilter').value.trim();
+            
+            if (!filterValue) {
+                // Show all data if filter is empty
+                filteredData = [...currentData];
+                document.getElementById('tableContainer').innerHTML = createTable(filteredData);
+                updateFilterStatus(filteredData.length - 1, currentData.length - 1);
+                return;
+            }
+
+            if (nameColumnIndex === -1 || !currentData || currentData.length === 0) {
+                return;
+            }
+
+            // Filter data based on exact name match
+            const headers = currentData[0];
+            const filteredRows = currentData.slice(1).filter(row => {
+                const nameValue = (row[nameColumnIndex] || '').trim();
+                return nameValue === filterValue;
+            });
+
+            filteredData = [headers, ...filteredRows];
+            document.getElementById('tableContainer').innerHTML = createTable(filteredData);
+            updateFilterStatus(filteredRows.length, currentData.length - 1);
+        }
+
+        function clearFilter() {
+            document.getElementById('nameFilter').selectedIndex = 0;
+            filteredData = [...currentData];
+            document.getElementById('tableContainer').innerHTML = createTable(filteredData);
+            updateFilterStatus(filteredData.length - 1, currentData.length - 1);
+        }
+
+        function updateFilterStatus(filtered, total) {
+            const status = document.getElementById('status');
+            if (filtered === total) {
+                status.textContent = `Menampilkan semua ${total} baris data`;
+                status.className = 'status success';
+            } else {
+                status.textContent = `Menampilkan ${filtered} dari ${total} baris data (difilter)`;
+                status.className = 'status loading';
+            }
+        }
+
+        async function loadSpreadsheetData() {
+            const loadBtn = document.getElementById('loadBtn');
+            const refreshBtn = document.getElementById('refreshBtn');
+            
+            loadBtn.disabled = true;
+            loadBtn.textContent = '⏳ Memuat...';
+            updateStatus('Mengambil data dari spreadsheet...', 'loading');
+
+            try {
+                // Menggunakan Google Sheets API publik
+                const csvUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv`;
+                
+                const response = await fetch(csvUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const csvText = await response.text();
+                
+                // Debug: Log raw CSV data
+                console.log('Raw CSV data:', csvText.substring(0, 500) + '...');
+                
+                if (!csvText || csvText.trim().length === 0) {
+                    throw new Error('Data CSV kosong atau tidak valid');
+                }
+                
+                const data = parseCSV(csvText);
+                
+                // Debug: Log parsed data
+                console.log('Parsed data:', data);
+                
+                if (!data || data.length === 0) {
+                    throw new Error('Tidak ada data yang dapat diparse dari CSV');
+                }
+                
+                currentData = data;
+                filteredData = [...data];
+                
+                // Find name column for filtering
+                nameColumnIndex = findNameColumn(data[0]);
+                
+                document.getElementById('tableContainer').innerHTML = createTable(data);
+                
+                // Show filter section
+                document.getElementById('filterSection').style.display = 'flex';
+                
+                updateStatus(`Berhasil memuat ${data.length - 1} baris data dengan ${data[0]?.length || 0} kolom. Kolom nama: "${data[0][nameColumnIndex]}"`, 'success');
+                refreshBtn.disabled = false;
+                
+            } catch (error) {
+                console.error('Error details:', error);
+                let errorMessage = 'Gagal memuat data. ';
+                
+                if (error.message.includes('HTTP 403')) {
+                    errorMessage += 'Spreadsheet tidak dapat diakses. Pastikan spreadsheet dibagikan sebagai "Anyone with the link can view".';
+                } else if (error.message.includes('HTTP 404')) {
+                    errorMessage += 'Spreadsheet tidak ditemukan. Periksa ID spreadsheet.';
+                } else if (error.message.includes('network')) {
+                    errorMessage += 'Periksa koneksi internet Anda.';
+                } else {
+                    errorMessage += error.message;
+                }
+                
+                updateStatus(errorMessage, 'error');
+                document.getElementById('tableContainer').innerHTML = 
+                    `<div class="empty-state"><h3>❌ Gagal memuat data</h3><p>${errorMessage}</p><p><small>ID Spreadsheet: ${SPREADSHEET_ID}</small></p></div>`;
+            } finally {
+                loadBtn.disabled = false;
+                loadBtn.textContent = '🔄 Muat Data';
+            }
+        }
+
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const result = [];
+            
+            for (let line of lines) {
+                if (line.trim()) {
+                    // Enhanced CSV parsing - handles quotes and commas properly
+                    const row = [];
+                    let current = '';
+                    let inQuotes = false;
+                    
+                    for (let i = 0; i < line.length; i++) {
+                        const char = line[i];
+                        const nextChar = line[i + 1];
+                        
+                        if (char === '"') {
+                            if (inQuotes && nextChar === '"') {
+                                // Handle escaped quotes
+                                current += '"';
+                                i++; // Skip next quote
+                            } else {
+                                // Toggle quote state
+                                inQuotes = !inQuotes;
+                            }
+                        } else if (char === ',' && !inQuotes) {
+                            // End of field
+                            row.push(current.trim());
+                            current = '';
+                        } else {
+                            current += char;
+                        }
+                    }
+                    
+                    // Add the last field
+                    row.push(current.trim());
+                    
+                    // Only add non-empty rows
+                    if (row.some(cell => cell.length > 0)) {
+                        result.push(row);
+                    }
+                }
+            }
+            
+            return result;
+        }
+
+        function refreshData() {
+            loadSpreadsheetData();
+        }
+
+        // PWA Functions
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                // Create service worker inline
+                const swCode = `
+                    const CACHE_NAME = 'views-absensi-v1';
+                    const urlsToCache = [
+                        '/',
+                        'https://iili.io/KjIKMJ9.png'
+                    ];
+
+                    self.addEventListener('install', event => {
+                        event.waitUntil(
+                            caches.open(CACHE_NAME)
+                                .then(cache => cache.addAll(urlsToCache))
+                        );
+                    });
+
+                    self.addEventListener('fetch', event => {
+                        event.respondWith(
+                            caches.match(event.request)
+                                .then(response => {
+                                    if (response) {
+                                        return response;
+                                    }
+                                    return fetch(event.request);
+                                })
+                        );
+                    });
+
+                    self.addEventListener('activate', event => {
+                        event.waitUntil(
+                            caches.keys().then(cacheNames => {
+                                return Promise.all(
+                                    cacheNames.map(cacheName => {
+                                        if (cacheName !== CACHE_NAME) {
+                                            return caches.delete(cacheName);
+                                        }
+                                    })
+                                );
+                            })
+                        );
+                    });
+                `;
+
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+
+                navigator.serviceWorker.register(swUrl)
+                    .then(registration => {
+                        console.log('Service Worker registered successfully:', registration);
+                        updatePWAStatus('🟢', 'Online', false);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            }
+        }
+
+        function updatePWAStatus(icon, text, isOffline = false) {
+            const statusElement = document.getElementById('pwaStatus');
+            const iconElement = document.getElementById('pwaStatusIcon');
+            const textElement = document.getElementById('pwaStatusText');
+            
+            iconElement.textContent = icon;
+            textElement.textContent = text;
+            
+            if (isOffline) {
+                statusElement.classList.add('offline');
+            } else {
+                statusElement.classList.remove('offline');
+            }
+        }
+
+        function showOfflinePage() {
+            const offlinePage = document.getElementById('offlinePage');
+            offlinePage.classList.add('show');
+            updateConnectionStatus('Tidak ada koneksi internet');
+        }
+
+        function hideOfflinePage() {
+            const offlinePage = document.getElementById('offlinePage');
+            offlinePage.classList.remove('show');
+        }
+
+        function updateConnectionStatus(message) {
+            const statusElement = document.getElementById('connectionStatus');
+            statusElement.textContent = message;
+        }
+
+        async function checkConnection() {
+            const retryBtn = document.getElementById('retryBtn');
+            retryBtn.disabled = true;
+            retryBtn.textContent = '⏳ Memeriksa...';
+            updateConnectionStatus('Memeriksa koneksi internet...');
+
+            try {
+                // Try to fetch a small resource to test connectivity
+                const response = await fetch('https://www.google.com/favicon.ico', {
+                    method: 'HEAD',
+                    mode: 'no-cors',
+                    cache: 'no-cache'
+                });
+                
+                // If we get here, we're online
+                updateConnectionStatus('Koneksi berhasil! Kembali online.');
+                setTimeout(() => {
+                    hideOfflinePage();
+                    updatePWAStatus('🟢', 'Online', false);
+                }, 1500);
+                
+            } catch (error) {
+                // Still offline
+                updateConnectionStatus('Masih tidak ada koneksi. Coba lagi nanti.');
+                setTimeout(() => {
+                    updateConnectionStatus('Tidak ada koneksi internet');
+                }, 3000);
+            } finally {
+                retryBtn.disabled = false;
+                retryBtn.textContent = '🔄 Coba Lagi';
+            }
+        }
+
+        function handleOfflineState() {
+            updatePWAStatus('🔴', 'Offline', true);
+            
+            // Show offline page after 2 seconds if still offline
+            setTimeout(() => {
+                if (!navigator.onLine) {
+                    showOfflinePage();
+                }
+            }, 2000);
+        }
+
+        function handleOnlineState() {
+            updatePWAStatus('🟢', 'Online', false);
+            hideOfflinePage();
+            
+            // Show brief "back online" message
+            setTimeout(() => {
+                updatePWAStatus('✅', 'Kembali Online!', false);
+                setTimeout(() => {
+                    updatePWAStatus('🟢', 'Online', false);
+                }, 2000);
+            }, 500);
+        }
+
+        function checkInstallPrompt() {
+            // Check if already installed
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                window.navigator.standalone === true) {
+                isInstalled = true;
+                return;
+            }
+
+            // Show install banner after 3 seconds if not dismissed
+            const dismissed = localStorage.getItem('pwa-install-dismissed');
+            if (!dismissed) {
+                setTimeout(() => {
+                    if (!isInstalled && deferredPrompt) {
+                        showInstallBanner();
+                    }
+                }, 3000);
+            }
+        }
+
+        function showInstallBanner() {
+            const banner = document.getElementById('pwaInstallBanner');
+            banner.classList.add('show');
+        }
+
+        function hideInstallBanner() {
+            const banner = document.getElementById('pwaInstallBanner');
+            banner.classList.remove('show');
+        }
+
+        function dismissInstallBanner() {
+            hideInstallBanner();
+            localStorage.setItem('pwa-install-dismissed', 'true');
+        }
+
+        async function installPWA() {
+            if (!deferredPrompt) {
+                // Fallback for browsers that don't support beforeinstallprompt
+                alert('Untuk menginstall aplikasi ini:\\n\\n1. Buka menu browser (⋮)\\n2. Pilih "Add to Home Screen" atau "Install App"\\n3. Ikuti petunjuk yang muncul');
+                return;
+            }
+
+            try {
+                // Show the install prompt
+                deferredPrompt.prompt();
+                
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                
+                if (outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                    hideInstallBanner();
+                    updatePWAStatus('✅', 'Installed!', false);
+                    isInstalled = true;
+                } else {
+                    console.log('User dismissed the install prompt');
+                }
+                
+                // Clear the deferredPrompt
+                deferredPrompt = null;
+            } catch (error) {
+                console.error('Error during installation:', error);
+                alert('Terjadi kesalahan saat menginstall aplikasi. Silakan coba lagi.');
+            }
+        }
+
+        // PWA Event Listeners
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later
+            deferredPrompt = e;
+            console.log('beforeinstallprompt event fired');
+        });
+
+        window.addEventListener('appinstalled', (e) => {
+            console.log('PWA was installed');
+            hideInstallBanner();
+            updatePWAStatus('✅', 'Installed!', false);
+            isInstalled = true;
+        });
+
+        // Online/Offline status
+        window.addEventListener('online', handleOnlineState);
+        window.addEventListener('offline', handleOfflineState);
+
+        // Check initial connection status
+        function checkInitialConnectionStatus() {
+            if (navigator.onLine) {
+                updatePWAStatus('🟢', 'Online', false);
+            } else {
+                handleOfflineState();
+            }
+        }
+
+        // Auto-load data when page loads
+        window.addEventListener('load', () => {
+            // Register service worker
+            registerServiceWorker();
+            
+            // Check initial connection status
+            checkInitialConnectionStatus();
+            
+            // Check for install prompt
+            checkInstallPrompt();
+            
+            // Load spreadsheet data
+            setTimeout(loadSpreadsheetData, 1000);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99468db9e02d40a3',t:'MTc2MTQ0NjA1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
